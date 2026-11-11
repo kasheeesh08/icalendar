@@ -199,3 +199,32 @@ def test_parameters_with_values_as_list(
     event = calendar.events[event_index]
     parameter = event.to_jcal()[1]
     assert expected_value in parameter
+
+@pytest.mark.parametrize(
+    ("attribute_name", "parameter_name"),
+    [
+        ("MEMBER", "member"),
+        ("DELEGATED_TO", "delegated-to"),
+        ("DELEGATED_FROM", "delegated-from"),
+    ],
+)
+def test_single_value_parameter_tuple_serialization(
+    attribute_name, parameter_name
+):
+    """Check that single values assigned through attribute setters serialize correctly."""
+    value = "mailto:jsmith@example.org"
+    addr = vCalAddress.new("jsmith@example.org")
+
+    setattr(addr, attribute_name, value)
+
+    event = Event()
+    event.attendees = [addr]
+
+    jcal = event.to_jcal()
+
+    assert [
+        "attendee",
+        {parameter_name: [value]},
+        "cal-address",
+        "mailto:jsmith@example.org",
+    ] in jcal[1]
