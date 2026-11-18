@@ -341,6 +341,20 @@ def test_get_multiple_many_values():
     parameters = Parameters({"delegated-to": EMAIL_2})
     assert parameters.get_multiple("delegated-to") == EMAIL_2
 
+def test_get_multiple_tuple_values():
+    """Test get_multiple when the value is a tuple."""
+    parameters = Parameters(
+        {
+            "delegated-to": (
+                "mailto:jsmith@example.org",
+                "mailto:jsmith@example.com",
+            )
+        }
+    )
+    assert parameters.get_multiple("delegated-to") == [
+        "mailto:jsmith@example.org",
+        "mailto:jsmith@example.com",
+    ]
 
 def test_parameters_only_serialize_if_they_have_content():
     """Empty parameters must not turn up."""
